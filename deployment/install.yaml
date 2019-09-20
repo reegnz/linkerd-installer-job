@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: linkerd-installer
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: linkerd-installer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: linkerd-installer
+  namespace: default
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: install-linkerd
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+      - name: install
+        image: reegnz/linkerd-installer:latest
+        imagePullPolicy: Never
+      restartPolicy: Never
